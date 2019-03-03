@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  - docker build -t mikecoys/react-test -f ./client/Dockerfile.dev ./client
+  - docker b uild -t mikecoys/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run mikecoys/react-test npm run test -- --coverage
@@ -21,3 +21,16 @@ after_success:
   - docker push mikecoys/multi-nginx
   - docker push mikecoys/multi-server
   - docker push mikecoys/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: eu-west-2
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-eu-west-2-052049757314
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
