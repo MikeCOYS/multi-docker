@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t mikecoys/react-test -f ./client/Dockerfile.dev ./client/Dockerfile.dev
+
+script:
+  - docker run mikecoys/react-test npm run test -- --coverage
+
+after_success:
+  - docker build -t mikecoys/multi-client ./client
+  - docker build -t mikecoys/multi-nginx ./nginx
+  - docker build -t mikecoys/multi-server ./server
+  - docker build -t mikecoys/multi-worker ./worker
+  # Setup env vars in travis settings with the user login credentials
+  # Login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push mikecoys/multi-client
+  - docker push mikecoys/multi-nginx
+  - docker push mikecoys/multi-server
+  - docker push mikecoys/multi-worker
