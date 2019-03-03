@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  - docker build -t mikecoys/react-test -f ./client/Dockerfile.dev ./client/Dockerfile.dev
+  - docker build -t mikecoys/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run mikecoys/react-test npm run test -- --coverage
